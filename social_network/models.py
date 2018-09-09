@@ -10,6 +10,9 @@ class User(models.Model):
     password = models.CharField(max_length=255, null=False, blank=False)
     likes = models.ManyToManyField('social_network.Post')
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class Post(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
