@@ -58,6 +58,8 @@ REST_FRAMEWORK = {
     ),
 }
 
+AUTH_USER_MODEL = 'social_network.User'
+
 ROOT_URLCONF = 'starnavy_test_app.urls'
 
 TEMPLATES = [
