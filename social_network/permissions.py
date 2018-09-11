@@ -8,4 +8,3 @@ class CreateUserPermission(BasePermission):
             return True
 
         return False
-

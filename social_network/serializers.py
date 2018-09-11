@@ -44,44 +44,20 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
 
-    # def create(self, validated_data):
-    #     raise serializers.ValidationError(self.data)
-
 
 class ClearbitInfoSerializer(serializers.ModelSerializer):
-
-    # user = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
-    # user = UserSerializer()
 
     class Meta:
         model = ClearbitInfo
         fields = '__all__'
 
     def validate(self, attrs):
-        # raise serializers.ValidationError(attrs['user'].pk)
         return attrs
 
     def create(self, validated_data):
-        # print('=============')
-        # print(self.data['user'])
-        # print(validated_data['user'])
-        # user = validated_data.pop('user')
         cb = ClearbitInfo(**validated_data)
         cb.save()
         return cb
-
-    # def validate_user(self, value):
-    #     raise serializers.ValidationError(f"value = {value}")
-
-
-    # def validate_utcOffset(self, value):
-    #     print(value)
-    #     if value == '':
-    #         return None
-    #     elif isinstance(value, int):
-    #         return value
-    #     else:
-    #         raise ValidationError('"A valid integer is required.')
 
 
 class BearerTokenSerializer(serializers.ModelSerializer):
@@ -95,7 +71,6 @@ class BearerTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     @classmethod
     def get_token(self, user):
-        # raise serializers.ValidationError(user)
 
         token = super(BearerTokenObtainPairSerializer, self).get_token(user)
 
@@ -120,9 +95,3 @@ class BearerTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['access'] = text_type(refresh.access_token)
 
         return data
-
-
-# class BearerTokerRefreshSerializer(TokenRefreshSerializer):
-#
-#     def validate(self, attrs):
-#         return super(BearerTokerRefreshSerializer, self).

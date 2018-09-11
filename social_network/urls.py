@@ -6,10 +6,6 @@ router = routers.DefaultRouter()
 router.register('user', UserView)
 router.register('post', PostView)
 
-# urlpatterns = [
-#     path('user/', UserView.as_view()),
-# ]
-
 urlpatterns = router.urls
 
 urlpatterns += [

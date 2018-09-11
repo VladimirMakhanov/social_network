@@ -1,4 +1,3 @@
-from django.forms import model_to_dict
 from rest_framework import permissions as rest_permissions
 from rest_framework import status
 from rest_framework.decorators import action
@@ -44,13 +43,7 @@ class PostView(ViewSetMixin, ListAPIView, CreateAPIView):
         # return Response(kwargs)
         post = Post.objects.get(pk=kwargs.get('pk'))
         user = request.user
-        # likes = User.objects.filter(pk=user.pk).filter(post__user__likes=post)
         likes = user.likes.filter(id=post.pk)
-        # likes.delete()
-        # return Response(likes.count())
-        # row = User.objects.filter(likes__user=user).first()
-        import json
-        # return Response(model_to_dict(row))
 
         if likes.count():
             User.likes.through.objects.get(user__id=user.pk, post__id=post.pk).delete()

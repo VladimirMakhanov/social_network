@@ -28,22 +28,13 @@ def normalize(data, _key=''):
 def get_info_from_clearbit(sender, instance, **kwargs):
     clearbit.key = 'sk_0045f533d191775f134fb6d95c2106ba'
     response = clearbit.Enrichment.find(email=instance.email)
-    # # logging.info(kwargs)
-    # logging.info(type(response))
-    # pprint(response.__dict__.get('person', 'Not_found'))
-    # pprint(response)
-    # pprint(instance.email)
-    # pprint(instance.pk)
+
     try:
         if response['person'] is not None:
             data = normalize(response['person'])
             data.update({'user': instance.pk})
-            # data.update({'user': model_to_dict(instance)})
-            print(data.get('user', 'WAT'))
             cb = ClearbitInfoSerializer(data=data)
-            # cb = ClearbitInfoSerializer(cb, data={'user': instance.pk})
-            # cb['user'] = instance
-            # if cb.is_valid():
+
             if cb.is_valid():
                 cb.save()
 
