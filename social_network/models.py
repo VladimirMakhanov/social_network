@@ -1,3 +1,5 @@
+import json
+from django.forms import model_to_dict
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
@@ -28,6 +30,7 @@ class User(AbstractUser):
     # def save(self, *args, **kwargs):
     #
     #     super(User, self).save(*args, **kwargs)
+
 
 class ClearbitInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
@@ -78,11 +81,21 @@ class ClearbitInfo(models.Model):
     indexedAt = models.CharField(max_length=255, null=True, blank=True)
 
 
+class PostManager(models.Manager):
+
+    def like(self, user: User):
+        query = super().get_queryset().filter(author=user)
+        if query is None:
+            user.likes.add(super().obj.model.pk)
+            user.save()
+
+
 class Post(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
     content = models.TextField(null=False, blank=False)
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
+    objects = PostManager()
 
 class BearerTokens(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)

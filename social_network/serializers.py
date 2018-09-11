@@ -1,7 +1,11 @@
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from rest_framework import serializers
-from social_network.models import User, Post, ClearbitInfo
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from django.utils.six import text_type
+from social_network.models import User, Post, ClearbitInfo, BearerTokens
 from social_network.services import verify_email
+
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -38,7 +42,10 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ('title', 'content', 'author')
+        fields = '__all__'
+
+    # def create(self, validated_data):
+    #     raise serializers.ValidationError(self.data)
 
 
 class ClearbitInfoSerializer(serializers.ModelSerializer):
@@ -75,3 +82,47 @@ class ClearbitInfoSerializer(serializers.ModelSerializer):
     #         return value
     #     else:
     #         raise ValidationError('"A valid integer is required.')
+
+
+class BearerTokenSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BearerTokens
+        fields = '__all__'
+
+
+class BearerTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(self, user):
+        # raise serializers.ValidationError(user)
+
+        token = super(BearerTokenObtainPairSerializer, self).get_token(user)
+
+        token['name'] = user.username
+
+        bt_data = {
+            'user': user.pk,
+            'refresh_token': text_type(token),
+            'lifetime_refresh_token': settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+            'access_token': text_type(token.access_token),
+            'lifetime_access_token': settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+
+        }
+        return token
+
+    def validate(self, attrs):
+        data = super(BearerTokenObtainPairSerializer, self).validate(attrs)
+
+        refresh = self.get_token(self.user)
+
+        data['refresh'] = text_type(refresh)
+        data['access'] = text_type(refresh.access_token)
+
+        return data
+
+
+# class BearerTokerRefreshSerializer(TokenRefreshSerializer):
+#
+#     def validate(self, attrs):
+#         return super(BearerTokerRefreshSerializer, self).
